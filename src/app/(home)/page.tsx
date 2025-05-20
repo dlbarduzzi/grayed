@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button"
 import { siteConfig } from "@/lib/site"
 
 export default function Page() {
@@ -15,7 +16,9 @@ export default function Page() {
           <span className="font-bold">
             {siteConfig.name}
           </span>
-
+        </div>
+        <div className="mt-2">
+          <Button type="button">Button</Button>
         </div>
       </div>
     </div>
