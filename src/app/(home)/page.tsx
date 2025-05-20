@@ -1,4 +1,6 @@
 import { Button } from "@/components/ui/button"
+import { SampleCheckbox } from "./_components/checkbox"
+
 import { siteConfig } from "@/lib/site"
 
 export default function Page() {
@@ -10,15 +12,23 @@ export default function Page() {
         </h1>
       </section>
       <div className="p-4">
-        <div>
+        <div className="border-b border-b-gray-200 pb-1.5">
           Welcome to
           {" "}
           <span className="font-bold">
             {siteConfig.name}
           </span>
         </div>
-        <div className="mt-2">
-          <Button type="button">Button</Button>
+        <div className="mt-3.5 space-y-3 divide-y divide-gray-200">
+          <div>
+            <Button type="button">Button</Button>
+          </div>
+          <div className="pt-3">
+            <SampleCheckbox />
+          </div>
+          <div className="pt-3">
+            More to come...
+          </div>
         </div>
       </div>
     </div>
