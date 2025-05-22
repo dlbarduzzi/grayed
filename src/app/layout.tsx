@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils"
 import { siteConfig } from "@/lib/site"
 import { fontGeistSans, fontGeistMono } from "@/lib/fonts"
 
-import { Toast } from "@/components/ui/toast"
+import { Toaster } from "sonner"
 
 export const metadata: Metadata = {
   title: {
@@ -46,7 +46,7 @@ export default function RootLayout({
         )}
       >
         {children}
-        <Toast />
+        <Toaster />
       </body>
     </html>
   )
