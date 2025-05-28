@@ -1,62 +1,47 @@
 "use client"
 
-import { FaInfoCircle, FaTimesCircle } from "react-icons/fa"
+import { FaInfoCircle } from "react-icons/fa"
 
 import {
   Toast,
-  ToastClose,
-  ToastDescription,
   ToastProvider,
-  ToastTitle,
   ToastViewport,
-  ToastWrapper,
+  ToastTitle,
+  ToastDescription,
+  ToastClose,
 } from "@/components/ui/toast"
 
-import { cn } from "@/lib/utils"
 import { useToast } from "@/hooks/toast"
 
 export function Toaster() {
   const { toasts } = useToast()
   return (
     <ToastProvider>
-      {toasts.map(t => {
-        const { id, title, description, action, withIcon, ...props } = t
+      {toasts.map(({ id, title, description, action, ...props }) => {
         return (
           <Toast key={id} {...props}>
-            <ToastWrapper>
-              <div className="flex">
-                {withIcon ? (
-                  <div className="shrink-0">
-                    {t.variant === "danger"
-                      ? (
-                          <FaTimesCircle
-                            aria-hidden="true"
-                            className="size-5 text-red-600"
-                          />
-                        )
-                      : (
-                          <FaInfoCircle
-                            aria-hidden="true"
-                            className="size-5 text-gray-800"
-                          />
-                        )
-                    }
-                  </div>
-                ) : null}
-                <div className={cn("space-y-1 pr-6", withIcon && "ml-3")}>
-                  {title
-                    ? <ToastTitle>{title}</ToastTitle>
-                    : null
-                  }
-                  {description
-                    ? <ToastDescription>{description}</ToastDescription>
-                    : null
-                  }
-                </div>
+            <div className="flex">
+              <div className="shrink-0">
+                <FaInfoCircle className="size-5 fill-gray-900" />
               </div>
-              {action}
+              <div className="ml-3 flex flex-1 flex-col pr-4">
+                {title
+                  ? <ToastTitle>{title}</ToastTitle>
+                  : null
+                }
+                {description ? (
+                  <div className="mt-1">
+                    <ToastDescription>{description}</ToastDescription>
+                  </div>
+                )
+                  : null
+                }
+                {action ? (
+                  <div className="mt-4">{action}</div>
+                ) : null}
+              </div>
               <ToastClose />
-            </ToastWrapper>
+            </div>
           </Toast>
         )
       })}
