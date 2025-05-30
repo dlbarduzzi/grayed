@@ -7,6 +7,7 @@ import { siteConfig } from "@/lib/site"
 import { fontGeistSans, fontGeistMono } from "@/lib/fonts"
 
 import { Toaster } from "@/components/ui/toaster"
+import { TRPCReactProvider } from "@/trpc/client/provider"
 
 export const metadata: Metadata = {
   title: {
@@ -45,8 +46,10 @@ export default function RootLayout({
           fontGeistMono.variable,
         )}
       >
-        {children}
-        <Toaster />
+        <TRPCReactProvider>
+          {children}
+          <Toaster />
+        </TRPCReactProvider>
       </body>
     </html>
   )

@@ -22,7 +22,7 @@ export default function Page() {
           </span>
         </div>
         <div className="mt-8 space-y-3 divide-y divide-gray-200">
-          <div>
+          <div className="pt-3">
             <Button type="button">Button</Button>
           </div>
           <div className="pt-3">
