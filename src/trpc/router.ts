@@ -1,7 +1,7 @@
 import { z } from "zod"
 import { procedure, router } from "./init"
 
-import { productsRouter } from "@/modules/products/routes/router"
+import { usersRouter } from "@/modules/users/router"
 
 export const appRouter = router({
   hello: procedure
@@ -15,7 +15,7 @@ export const appRouter = router({
         greeting: `hello ${opts.input.text}`,
       }
     }),
-  products: productsRouter,
+  users: usersRouter,
 })
 
 export type AppRouter = typeof appRouter

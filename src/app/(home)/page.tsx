@@ -4,8 +4,10 @@ import { SampleToast } from "./_components/toast"
 import { SampleCheckbox } from "./_components/checkbox"
 
 import { siteConfig } from "@/lib/site"
+import { caller } from "@/trpc/server/query-server"
 
-export default function Page() {
+export default async function Page() {
+  const users = await caller.users.list()
   return (
     <div>
       <section aria-labelledby="homepage-header">
@@ -22,6 +24,9 @@ export default function Page() {
           </span>
         </div>
         <div className="mt-8 space-y-3 divide-y divide-gray-200">
+          <div>
+            <pre>{JSON.stringify(users, null, 2)}</pre>
+          </div>
           <div className="pt-3">
             <Button type="button">Button</Button>
           </div>
