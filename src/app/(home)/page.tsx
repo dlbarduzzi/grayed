@@ -1,13 +1,27 @@
+import { Suspense } from "react"
+import { ErrorBoundary } from "react-error-boundary"
+import { dehydrate, HydrationBoundary } from "@tanstack/react-query"
+
 import { Button } from "@/components/ui/button"
+import { UsersList } from "@/modules/users/views/list"
 
 import { SampleToast } from "./_components/toast"
 import { SampleCheckbox } from "./_components/checkbox"
 
 import { siteConfig } from "@/lib/site"
-import { caller } from "@/trpc/server/query-server"
+import { getQueryServer, trpcServer } from "@/trpc/server/query-server"
+
+function UsersListLoading() {
+  return <div>Loading users...</div>
+}
+
+function UsersListError() {
+  return <div>Failed to load users!</div>
+}
 
 export default async function Page() {
-  const users = await caller.users.list()
+  const queryServer = getQueryServer()
+  void queryServer.prefetchQuery(trpcServer.users.list.queryOptions())
   return (
     <div>
       <section aria-labelledby="homepage-header">
@@ -25,7 +39,13 @@ export default async function Page() {
         </div>
         <div className="mt-8 space-y-3 divide-y divide-gray-200">
           <div>
-            <pre>{JSON.stringify(users, null, 2)}</pre>
+            <HydrationBoundary state={dehydrate(queryServer)}>
+              <Suspense fallback={<UsersListLoading />}>
+                <ErrorBoundary fallback={<UsersListError />}>
+                  <UsersList />
+                </ErrorBoundary>
+              </Suspense>
+            </HydrationBoundary>
           </div>
           <div className="pt-3">
             <Button type="button">Button</Button>
