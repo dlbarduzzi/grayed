@@ -1,6 +1,7 @@
 import { z } from "zod"
 import { procedure, router } from "./init"
 
+import { authRouter } from "@/modules/auth/router"
 import { usersRouter } from "@/modules/users/router"
 
 export const appRouter = router({
@@ -15,6 +16,7 @@ export const appRouter = router({
         greeting: `hello ${opts.input.text}`,
       }
     }),
+  auth: authRouter,
   users: usersRouter,
 })
 
