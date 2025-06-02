@@ -1,3 +1,5 @@
+import NextLink from "next/link"
+
 import { Suspense } from "react"
 import { ErrorBoundary } from "react-error-boundary"
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query"
@@ -39,6 +41,11 @@ export default async function Page() {
         </div>
         <div className="mt-8 space-y-3 divide-y divide-gray-200">
           <div>
+            <Button asChild>
+              <NextLink href="/sign-up" prefetch={false}>Sign up</NextLink>
+            </Button>
+          </div>
+          <div className="pt-3">
             <HydrationBoundary state={dehydrate(queryServer)}>
               <Suspense fallback={<UsersListLoading />}>
                 <ErrorBoundary fallback={<UsersListError />}>
