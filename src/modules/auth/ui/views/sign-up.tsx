@@ -24,6 +24,9 @@ import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 
+import { GitHubLogo } from "@/components/github-logo"
+import { GoogleLogo } from "@/components/google-logo"
+
 import { cn } from "@/lib/utils"
 import { useTRPC } from "@/trpc/client/provider"
 import { signUpSchema } from "@/modules/auth/schemas"
@@ -57,31 +60,33 @@ export function SignUp() {
 
   return (
     <div className="overflow-hidden rounded-lg border border-gray-200 bg-white p-6">
-      <div className="grid grid-cols-1 gap-y-6">
-        <div className="flex flex-col items-center justify-center gap-y-4">
-          <NextLink href="/">
-            <NextImage
-              src="/images/logo.png"
-              alt="Grayed"
-              width={500}
-              height={500}
-              className="h-12 w-auto"
-            />
-            <span className="sr-only">Link to home page.</span>
-          </NextLink>
-          <div className="text-center">
-            <h3 className="text-base font-bold tracking-tight text-gray-900">
-              Welcome to Grayed
-            </h3>
-            <p className="text-balance text-sm text-gray-600">
-              Create an account and start exploring
-            </p>
-          </div>
-        </div>
+      <div>
+        <NextLink href="/">
+          <NextImage
+            src="/images/logo.png"
+            alt="Grayed"
+            width={500}
+            height={500}
+            className="h-10 w-auto"
+          />
+          <span className="sr-only">Link to home page.</span>
+        </NextLink>
+        <h2 className="mt-8 text-lg font-bold tracking-tight text-gray-800">
+          Sign up
+        </h2>
+        <p className="mt-1 text-sm text-gray-500">
+          Already have an account?
+          {" "}
+          <a href="#" className="font-semibold text-gray-800 hover:text-gray-500">
+            Sign in
+          </a>
+        </p>
+      </div>
+      <div className="mt-7">
         <FormProvider {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className="grid grid-cols-1 gap-y-5"
+            className="grid grid-cols-1 gap-y-6"
           >
             <FormField
               control={form.control}
@@ -135,7 +140,7 @@ export function SignUp() {
               <Label
                 htmlFor="sign-up-terms-and-conditions"
                 className={cn(
-                  "text-[13px] font-medium peer-disabled:cursor-not-allowed",
+                  "text-[13px] font-normal peer-disabled:cursor-not-allowed",
                   isSubmitting && "text-gray-400",
                 )}
               >
@@ -171,6 +176,36 @@ export function SignUp() {
             </div>
           </form>
         </FormProvider>
+        <div className="mt-10">
+          <div className="relative">
+            <div aria-hidden="true" className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-t-gray-200" />
+            </div>
+            <div className="relative flex justify-center text-sm font-medium">
+              <span className="bg-white px-6 text-gray-500">Or continue with</span>
+            </div>
+          </div>
+          <div className="mt-6">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <Button
+                type="button"
+                size="md"
+                className="border border-gray-300 bg-white"
+              >
+                <GoogleLogo />
+                Google
+              </Button>
+              <Button
+                type="button"
+                size="md"
+                className="border border-gray-300 bg-white"
+              >
+                <GitHubLogo />
+                GitHub
+              </Button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   )

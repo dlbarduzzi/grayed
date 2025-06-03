@@ -5,7 +5,7 @@ export default function Page() {
   return (
     <div className={cn(
       "flex min-h-svh flex-col items-center justify-start sm:justify-center",
-      "bg-gradient-to-br from-gray-50 to-gray-200 p-6 md:p-10",
+      "bg-gradient-to-br from-gray-50 to-gray-200 p-4 sm:p-6 md:p-10",
     )}
     >
       <section aria-labelledby="sign-up-header">
