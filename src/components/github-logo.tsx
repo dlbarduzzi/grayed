@@ -4,7 +4,7 @@ export function GitHubLogo() {
       fill="currentColor"
       viewBox="0 0 20 20"
       aria-hidden="true"
-      className="size-5 fill-[#24292F]"
+      className="size-5 shrink-0 fill-[#24292F]"
     >
       <path
         // eslint-disable-next-line style/max-len

@@ -13,8 +13,12 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: `bg-gray-200 text-gray-800 hover:bg-gray-300
+        default: `bg-gray-800 text-white hover:bg-gray-700
+          focus-visible:ring-gray-800 disabled:bg-gray-600 disabled:text-gray-300`,
+        neutral: `bg-gray-200 text-gray-800 hover:bg-gray-300
           focus-visible:ring-gray-300 disabled:text-gray-400`,
+        clear: `border border-gray-200 bg-white text-gray-800 hover:bg-gray-100
+          focus-visible:ring-gray-300 disabled:bg-gray-100 disabled:text-gray-400`,
       },
       size: {
         default: "h-10 px-4 py-2",

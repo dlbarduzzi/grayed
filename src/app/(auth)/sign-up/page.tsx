@@ -13,7 +13,7 @@ export default function Page() {
           Sign up.
         </h1>
       </section>
-      <div className="w-full max-w-md">
+      <div className="w-full max-w-[420px]">
         <SignUp />
       </div>
     </div>

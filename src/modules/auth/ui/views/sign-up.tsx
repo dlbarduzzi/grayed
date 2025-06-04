@@ -10,6 +10,9 @@ import { useState } from "react"
 import { useMutation } from "@tanstack/react-query"
 import { zodResolver } from "@hookform/resolvers/zod"
 
+import { LuInfo } from "react-icons/lu"
+import { FaCheck, FaCircle, FaEye, FaEyeSlash, FaTimes } from "react-icons/fa"
+
 import {
   FormControl,
   FormField,
@@ -19,20 +22,34 @@ import {
   FormProvider,
 } from "@/components/ui/form"
 
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
+
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 
-import { GitHubLogo } from "@/components/github-logo"
-import { GoogleLogo } from "@/components/google-logo"
+import { GitHubButton } from "@/components/github-button"
+import { GoogleButton } from "@/components/google-button"
+import { ButtonSpinner } from "@/components/button-spinner"
 
-import { cn } from "@/lib/utils"
+import { cn, delay } from "@/lib/utils"
+import { strings } from "@/tools/strings"
 import { useTRPC } from "@/trpc/client/provider"
-import { signUpSchema } from "@/modules/auth/schemas"
+
+import {
+  signUpSchema,
+  PASSWORD_MIN_CHARS,
+  PASSWORD_MAX_CHARS,
+} from "@/modules/auth/schemas"
 
 export function SignUp() {
   const [isTermsChecked, setIsTermsChecked] = useState(true)
+  const [showPasswordValue, setShowPasswordValue] = useState(false)
+  const [showPasswordRequirements, setShowPasswordRequirements] = useState(false)
 
   const trpc = useTRPC()
   const query = useMutation(trpc.auth.signUp.mutationOptions())
@@ -46,43 +63,50 @@ export function SignUp() {
   })
 
   const { errors, isSubmitting } = form.formState
+  const passwordValue = form.watch("password")
 
   async function onSubmit(data: SignUpSchema) {
-    if (!isTermsChecked) {
-      // eslint-disable-next-line no-alert
-      alert("You must accept terms and conditions")
-      return
-    }
-    const res = await query.mutateAsync(data)
-    // eslint-disable-next-line no-console
-    console.log(res)
+    setShowPasswordValue(() => false)
+    setShowPasswordRequirements(() => false)
+    await delay(2000)
+    const resp = await query.mutateAsync(data)
+    console.warn(resp)
   }
 
   return (
-    <div className="overflow-hidden rounded-lg border border-gray-200 bg-white p-6">
+    <div className={cn(
+      "overflow-hidden rounded-lg border border-gray-200",
+      "bg-white px-8 py-9",
+    )}
+    >
       <div>
-        <NextLink href="/">
-          <NextImage
-            src="/images/logo.png"
-            alt="Grayed"
-            width={500}
-            height={500}
-            className="h-10 w-auto"
-          />
-          <span className="sr-only">Link to home page.</span>
-        </NextLink>
+        <div className="flex">
+          <NextLink
+            href="/"
+            className={cn(
+              "rounded-full focus-visible:outline-none focus-visible:ring-2",
+              "focus-visible:ring-black focus-visible:ring-offset-2",
+              isSubmitting && "pointer-events-none",
+            )}
+          >
+            <NextImage
+              src="/images/logo.png"
+              alt="Grayed"
+              width={500}
+              height={500}
+              className="h-10 w-auto"
+            />
+            <span className="sr-only">Link to home page.</span>
+          </NextLink>
+        </div>
         <h2 className="mt-8 text-lg font-bold tracking-tight text-gray-800">
           Sign up
         </h2>
-        <p className="mt-1 text-sm text-gray-500">
-          Already have an account?
-          {" "}
-          <a href="#" className="font-semibold text-gray-800 hover:text-gray-500">
-            Sign in
-          </a>
+        <p className="text-sm text-gray-800">
+          Create an account and start exploring
         </p>
       </div>
-      <div className="mt-7">
+      <div className="mt-8">
         <FormProvider {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
@@ -114,17 +138,64 @@ export function SignUp() {
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Password</FormLabel>
-                  <div className="mt-0.5">
+                  <div className="flex">
+                    <div className="flex-1">
+                      <FormLabel>Password</FormLabel>
+                    </div>
+                    <Popover
+                      open={showPasswordRequirements}
+                      onOpenChange={setShowPasswordRequirements}
+                    >
+                      <PopoverTrigger className={cn(
+                        "mr-1 text-sm font-medium flex items-center gap-x-1",
+                        isSubmitting
+                          ? "pointer-events-none text-gray-400"
+                          : "text-gray-500 hover:text-gray-700",
+                      )}
+                      >
+                        Requirements
+                        <LuInfo className="size-4" />
+                      </PopoverTrigger>
+                      <PopoverContent
+                        side="top"
+                        align="end"
+                        className="w-80"
+                        onFocusOutside={e => e.preventDefault()}
+                        onPointerDownOutside={e => e.preventDefault()}
+                      >
+                        <PasswordRequirements
+                          hasError={!!errors.password}
+                          password={passwordValue}
+                        />
+                      </PopoverContent>
+                    </Popover>
+                  </div>
+                  <div className="relative mt-0.5">
                     <FormControl>
                       <Input
                         {...field}
-                        type="password"
+                        type={showPasswordValue ? "text" : "password"}
                         variant={errors.password ? "danger" : "default"}
                         disabled={isSubmitting}
                         placeholder="Enter your password..."
+                        className="pr-12"
                       />
                     </FormControl>
+                    <div className="absolute inset-y-0 right-0 flex items-center pr-3">
+                      <div
+                        role="button"
+                        onClick={() => setShowPasswordValue(() => !showPasswordValue)}
+                        className={cn(isSubmitting
+                          ? "pointer-events-none text-gray-300"
+                          : "text-gray-300",
+                        )}
+                      >
+                        {showPasswordValue
+                          ? <FaEye className="size-6" />
+                          : <FaEyeSlash className="size-6" />
+                        }
+                      </div>
+                    </div>
                   </div>
                   <FormMessage />
                 </FormItem>
@@ -140,7 +211,7 @@ export function SignUp() {
               <Label
                 htmlFor="sign-up-terms-and-conditions"
                 className={cn(
-                  "text-[13px] font-normal peer-disabled:cursor-not-allowed",
+                  "peer-disabled:cursor-not-allowed font-normal text-sm/6",
                   isSubmitting && "text-gray-400",
                 )}
               >
@@ -172,41 +243,126 @@ export function SignUp() {
               </Label>
             </div>
             <div>
-              <Button type="submit" size="md" className="w-full">Create Account</Button>
+              <ButtonSpinner
+                type="submit"
+                size="md"
+                className="w-full"
+                title="Create Account"
+                disabled={isSubmitting}
+                isLoading={isSubmitting}
+              />
             </div>
           </form>
         </FormProvider>
-        <div className="mt-10">
-          <div className="relative">
-            <div aria-hidden="true" className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-t-gray-200" />
-            </div>
-            <div className="relative flex justify-center text-sm font-medium">
-              <span className="bg-white px-6 text-gray-500">Or continue with</span>
-            </div>
+      </div>
+      <div className="mt-8">
+        <div className="relative">
+          <div aria-hidden="true" className="absolute inset-0 flex items-center">
+            <div className="w-full border-t border-t-gray-200" />
           </div>
-          <div className="mt-6">
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <Button
-                type="button"
-                size="md"
-                className="border border-gray-300 bg-white"
-              >
-                <GoogleLogo />
-                Google
-              </Button>
-              <Button
-                type="button"
-                size="md"
-                className="border border-gray-300 bg-white"
-              >
-                <GitHubLogo />
-                GitHub
-              </Button>
-            </div>
+          <div className="relative flex justify-center text-sm font-medium">
+            <span className="bg-white px-6 text-gray-500">Or continue with</span>
           </div>
         </div>
+        <div className="mt-6 grid grid-cols-1 gap-3.5 sm:grid-cols-2">
+          <GoogleButton
+            action="sign-up"
+            isDisabled={isSubmitting || !isTermsChecked}
+          />
+          <GitHubButton
+            action="sign-up"
+            isDisabled={isSubmitting || !isTermsChecked}
+          />
+        </div>
+      </div>
+      <div className="mt-8 text-center">
+        <p className="text-sm text-gray-800">
+          Already have an account?
+          {" "}
+          <NextLink
+            href="/sign-in"
+            className={cn(
+              "font-semibold hover:underline hover:underline-offset-4",
+              isSubmitting && "pointer-events-none text-gray-600",
+            )}
+          >
+            Sign in
+          </NextLink>
+        </p>
       </div>
     </div>
+  )
+}
+
+type PasswordRequirementsProps = {
+  hasError: boolean
+  password: string
+}
+
+function PasswordRequirements({ hasError, password }: PasswordRequirementsProps) {
+  return (
+    <div>
+      <div className="text-sm font-medium text-gray-900">Password Requirements</div>
+      <div className="text-xs/5 text-gray-600">
+        Your password must meet the following criteria:
+      </div>
+      <div className="mt-4">
+        <ul className="space-y-1">
+          <PasswordRequirementsCheck
+            isValid={strings(password).hasNumber()}
+            hasError={hasError}
+            description="Contain a number"
+          />
+          <PasswordRequirementsCheck
+            isValid={strings(password).hasSpecialChar()}
+            hasError={hasError}
+            description="Contain a special character"
+          />
+          <PasswordRequirementsCheck
+            isValid={strings(password).hasLowercaseChar()}
+            hasError={hasError}
+            description="Contain a lowercase character"
+          />
+          <PasswordRequirementsCheck
+            isValid={strings(password).hasUppercaseChar()}
+            hasError={hasError}
+            description="Contain an uppercase character"
+          />
+          <PasswordRequirementsCheck
+            isValid={
+              password.length >= PASSWORD_MIN_CHARS
+              && password.length <= PASSWORD_MAX_CHARS
+            }
+            hasError={hasError}
+            // eslint-disable-next-line style/max-len
+            description={`Between ${PASSWORD_MIN_CHARS} and ${PASSWORD_MAX_CHARS} characters long`}
+          />
+        </ul>
+      </div>
+    </div>
+  )
+}
+
+type PasswordRequirementsCheckProps = {
+  isValid: boolean
+  hasError: boolean
+  description: string
+}
+
+function PasswordRequirementsCheck(props: PasswordRequirementsCheckProps) {
+  const { isValid, hasError, description } = props
+  return (
+    <li className="inline-flex items-center gap-x-2 text-sm text-gray-800">
+      <span className="flex size-5 items-center justify-center">
+        {isValid ? (
+          <FaCheck className="size-5 text-green-500" />
+        ) : hasError ? (
+          <FaTimes className="size-5 h-full text-red-500" />
+        ) : (
+          <FaCircle className="size-3 h-full fill-gray-300 stroke-none" />
+        )}
+      </span>
+      {description}
+    </li>
   )
 }
