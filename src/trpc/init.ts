@@ -1,3 +1,5 @@
+import type { inferProcedureBuilderResolverOptions } from "@trpc/server"
+
 import superjson from "superjson"
 
 import { cache } from "react"
@@ -20,3 +22,6 @@ export const procedure = t.procedure.use(({ next }) => {
 export const createContext = cache(async () => {
   return { foo: "bar" }
 })
+
+export type AppOptions = inferProcedureBuilderResolverOptions<typeof procedure>
+export type AppContext = AppOptions["ctx"]

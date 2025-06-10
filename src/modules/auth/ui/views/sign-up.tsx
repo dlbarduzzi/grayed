@@ -1,14 +1,15 @@
 "use client"
 
+import type { SignUpSchema } from "@/modules/auth/schemas"
+
 import NextLink from "next/link"
 import NextImage from "next/image"
-
-import type { SignUpSchema } from "@/modules/auth/schemas"
 
 import { useForm } from "react-hook-form"
 import { useState } from "react"
 import { useMutation } from "@tanstack/react-query"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { TRPCClientError } from "@trpc/client"
 
 import { LuInfo } from "react-icons/lu"
 import { FaCheck, FaCircle, FaEye, FaEyeSlash, FaTimes } from "react-icons/fa"
@@ -36,7 +37,7 @@ import { GitHubButton } from "@/components/github-button"
 import { GoogleButton } from "@/components/google-button"
 import { ButtonSpinner } from "@/components/button-spinner"
 
-import { cn, delay } from "@/lib/utils"
+import { cn } from "@/lib/utils"
 import { strings } from "@/tools/strings"
 import { useTRPC } from "@/trpc/client/provider"
 
@@ -66,11 +67,25 @@ export function SignUp() {
   const passwordValue = form.watch("password")
 
   async function onSubmit(data: SignUpSchema) {
+    if (!isTermsChecked) {
+      // eslint-disable-next-line no-alert
+      alert("You must accept terms and conditions")
+      return
+    }
     setShowPasswordValue(() => false)
     setShowPasswordRequirements(() => false)
-    await delay(2000)
-    const resp = await query.mutateAsync(data)
-    console.warn(resp)
+    try {
+      const resp = await query.mutateAsync(data)
+      console.warn(resp)
+    }
+    catch (error) {
+      if (error instanceof TRPCClientError) {
+        console.error("UNHANDLED TRPCClientError", error.message)
+      }
+      else {
+        console.error("UNHANDLED Error", error)
+      }
+    }
   }
 
   return (
