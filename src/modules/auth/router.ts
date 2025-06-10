@@ -1,10 +1,10 @@
+import bcrypt from "bcryptjs"
 import postgres from "postgres"
 
 import { signUpSchema } from "./schemas"
 import { createUser, findUserByEmail } from "./queries"
 
 import { procedure, router } from "@/trpc/init"
-import { hashPassword } from "@/tools/crypto/password"
 
 export const authRouter = router({
   signUp: procedure
@@ -20,7 +20,7 @@ export const authRouter = router({
           }
         }
 
-        const hash = await hashPassword(input.password)
+        const hash = await bcrypt.hash(input.password, 12)
         const newUser = await createUser(ctx, input.email, hash)
 
         // TODO: Link account.
