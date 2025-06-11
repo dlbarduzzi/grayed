@@ -5,6 +5,7 @@ import { signUpSchema } from "./schemas"
 import { createUser, findUserByEmail } from "./queries"
 
 import { procedure, router } from "@/trpc/init"
+import { accounts } from "@/db/schemas"
 
 export const authRouter = router({
   signUp: procedure
@@ -23,7 +24,14 @@ export const authRouter = router({
         const hash = await bcrypt.hash(input.password, 12)
         const newUser = await createUser(ctx, input.email, hash)
 
-        // TODO: Link account.
+        await ctx.db
+          .insert(accounts)
+          .values({
+            userId: newUser.id,
+            accountId: newUser.id,
+            providerId: "credential",
+          })
+
         // TODO: Send email for verification.
         // NOTE: Do not create session. User must verify email first.
 
